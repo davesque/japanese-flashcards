@@ -92,19 +92,24 @@ def main():
     with open('template.tex', 'r') as f:
         template = Template(f.read())
 
+    prefix = sys.argv[1]
     reader = csv.reader(sys.stdin)
 
-    for content, name in reader:
-        tex_content = template.substitute(content=content)
-        png_content = tex_to_png(tex_content)
+    with open('cards.txt', 'w') as cards_file:
+        for content, name in reader:
+            tex_content = template.substitute(content=content)
+            png_content = tex_to_png(tex_content)
 
-        output_dir = pathlib.Path('output')
-        png_file = output_dir / f'{name}.png'
+            output_dir = pathlib.Path('output')
+            png_file = f'{prefix}-{name}.png'
+            png_file_path = output_dir / png_file
 
-        logger.info(f'Writing to {png_file}...')
+            logger.info(f'Writing to {png_file_path}...')
 
-        with open(png_file, 'wb') as f:
-            f.write(png_content)
+            with open(png_file_path, 'wb') as f:
+                f.write(png_content)
+
+            cards_file.write(f'<img src="{png_file}">; {name}\n')
 
 
 if __name__ == '__main__':
