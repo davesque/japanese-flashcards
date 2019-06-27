@@ -1,0 +1,2 @@
+default:
+	xetex template.tex
